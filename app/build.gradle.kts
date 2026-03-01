@@ -43,6 +43,16 @@ android {
     kotlinOptions {
         jvmTarget = "1.8"
     }
+    
+    // Split APKs by architecture to reduce size
+    splits {
+        abi {
+            isEnable = true
+            reset()
+            include("arm64-v8a", "armeabi-v7a")
+            isUniversalApk = true
+        }
+    }
 }
 
 dependencies {
@@ -64,16 +74,16 @@ dependencies {
     implementation("androidx.room:room-ktx:2.6.1")
     kapt("androidx.room:room-compiler:2.6.1")
     
-    // ONNX Runtime
+    // ⚠️ CRITICAL: ONNX Runtime - For AI model inference
     implementation("com.microsoft.onnxruntime:onnxruntime-android:1.17.1")
     
-    // Hilt
+    // Hilt Dependency Injection
     implementation("com.google.dagger:hilt-android:2.50")
     kapt("com.google.dagger:hilt-compiler:2.50")
     
     // Coroutines
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")
     
-    // Gson
+    // Gson for JSON parsing (tokenizer)
     implementation("com.google.code.gson:gson:2.10.1")
 }
