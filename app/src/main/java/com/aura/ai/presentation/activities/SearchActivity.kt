@@ -13,8 +13,6 @@ import com.aura.ai.R
 import com.aura.ai.databinding.ActivitySearchBinding
 import com.aura.ai.presentation.adapters.SearchResultsAdapter
 import com.aura.ai.presentation.viewmodels.SearchViewModel
-import com.aura.ai.utils.Extensions.hide
-import com.aura.ai.utils.Extensions.show
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -63,16 +61,16 @@ class SearchActivity : AppCompatActivity() {
                 } else {
                     binding.tvEmpty.text = "Type to search your conversations"
                 }
-                binding.tvEmpty.show()
-                binding.recyclerView.hide()
+                binding.tvEmpty.visibility = View.VISIBLE
+                binding.recyclerView.visibility = View.GONE
             } else {
-                binding.tvEmpty.hide()
-                binding.recyclerView.show()
+                binding.tvEmpty.visibility = View.GONE
+                binding.recyclerView.visibility = View.VISIBLE
             }
         })
         
         viewModel.isLoading.observe(this, Observer { isLoading ->
-            if (isLoading) binding.progressBar.show() else binding.progressBar.hide()
+            binding.progressBar.visibility = if (isLoading) View.VISIBLE else View.GONE
         })
     }
     
