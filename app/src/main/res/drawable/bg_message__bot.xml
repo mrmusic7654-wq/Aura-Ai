@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shape xmlns:android="http://schemas.android.com/apk/res/android">
+    <solid android:color="@color/aura_bot_message" />
+    <corners
+        android:topLeft="16dp"
+        android:topRight="16dp"
+        android:bottomLeft="4dp"
+        android:bottomRight="16dp" />
+    <padding
+        android:left="12dp"
+        android:top="8dp"
+        android:right="12dp"
+        android:bottom="8dp" />
+</shape>
