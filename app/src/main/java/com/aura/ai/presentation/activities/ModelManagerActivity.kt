@@ -1,13 +1,9 @@
 package com.aura.ai.presentation.activities
 
 import android.content.Intent
-import android.net.Uri
-import android.os.Build
 import android.os.Bundle
-import android.provider.Settings
 import android.view.MenuItem
 import android.view.View
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
@@ -29,12 +25,6 @@ class ModelManagerActivity : AppCompatActivity() {
     private lateinit var binding: ActivityModelManagerBinding
     private val viewModel: ModelManagerViewModel by viewModels()
     private lateinit var modelAdapter: ModelAdapter
-    
-    private val requestPermissionLauncher = registerForActivityResult(
-        ActivityResultContracts.StartActivityForResult()
-    ) {
-        checkPermission()
-    }
     
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -139,8 +129,9 @@ class ModelManagerActivity : AppCompatActivity() {
     }
     
     private fun openModelsFolder() {
+        val folder = android.net.Uri.parse(Constants.MODELS_FOLDER)
         val intent = Intent(Intent.ACTION_VIEW).apply {
-            data = Uri.parse(Constants.MODELS_FOLDER)
+            setDataAndType(folder, "resource/folder")
             flags = Intent.FLAG_ACTIVITY_NEW_TASK
         }
         
