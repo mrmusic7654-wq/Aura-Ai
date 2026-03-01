@@ -54,7 +54,8 @@ class MainActivity : AppCompatActivity() {
             
             val result = withContext(Dispatchers.IO) {
                 try {
-                    ModelLoader.getModelFile(this@MainActivity, "qwen3-0.6b-int8.onnx")
+                    // FIXED: Removed context parameter
+                    ModelLoader.getModelFile("qwen3-0.6b-int8.onnx")
                     val loaded = qwen3Model.loadModel()
                     qwen3Model.unloadModel()
                     
