@@ -76,10 +76,10 @@ class ChatActivity : AppCompatActivity() {
         
         viewModel.isLoading.observe(this, Observer { isLoading ->
             if (isLoading) {
-                binding.progressBar.show()
+                binding.progressBar.visibility = View.VISIBLE
                 binding.btnSend.isEnabled = false
             } else {
-                binding.progressBar.hide()
+                binding.progressBar.visibility = View.GONE
                 binding.btnSend.isEnabled = true
             }
         })
