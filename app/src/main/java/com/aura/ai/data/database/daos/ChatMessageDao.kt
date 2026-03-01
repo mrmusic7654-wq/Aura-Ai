@@ -8,7 +8,7 @@ import kotlinx.coroutines.flow.Flow
 interface ChatMessageDao {
     
     @Insert
-    suspend fun insert(message: ChatMessage): String
+    suspend fun insert(message: ChatMessage): Long  // Changed from String to Long
     
     @Insert
     suspend fun insertAll(messages: List<ChatMessage>)
