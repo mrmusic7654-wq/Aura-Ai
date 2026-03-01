@@ -14,8 +14,6 @@ import com.aura.ai.databinding.ActivityModelManagerBinding
 import com.aura.ai.presentation.adapters.ModelAdapter
 import com.aura.ai.presentation.viewmodels.ModelManagerViewModel
 import com.aura.ai.utils.Constants
-import com.aura.ai.utils.Extensions.hide
-import com.aura.ai.utils.Extensions.show
 import com.aura.ai.utils.StorageHelper
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -61,12 +59,12 @@ class ModelManagerActivity : AppCompatActivity() {
             modelAdapter.submitList(models)
             
             if (models.isEmpty()) {
-                binding.tvEmpty.show()
-                binding.recyclerView.hide()
+                binding.tvEmpty.visibility = View.VISIBLE
+                binding.recyclerView.visibility = View.GONE
                 binding.btnLoadModel.isEnabled = false
             } else {
-                binding.tvEmpty.hide()
-                binding.recyclerView.show()
+                binding.tvEmpty.visibility = View.GONE
+                binding.recyclerView.visibility = View.VISIBLE
                 binding.btnLoadModel.isEnabled = true
             }
         })
@@ -78,7 +76,7 @@ class ModelManagerActivity : AppCompatActivity() {
         })
         
         viewModel.isLoading.observe(this, Observer { isLoading ->
-            if (isLoading) binding.progressBar.show() else binding.progressBar.hide()
+            binding.progressBar.visibility = if (isLoading) View.VISIBLE else View.GONE
         })
         
         viewModel.statusMessage.observe(this, Observer { message ->
@@ -113,12 +111,12 @@ class ModelManagerActivity : AppCompatActivity() {
     
     private fun checkPermission() {
         if (StorageHelper.hasStoragePermission(this)) {
-            binding.permissionLayout.hide()
-            binding.contentLayout.show()
+            binding.permissionLayout.visibility = View.GONE
+            binding.contentLayout.visibility = View.VISIBLE
             refreshModels()
         } else {
-            binding.permissionLayout.show()
-            binding.contentLayout.hide()
+            binding.permissionLayout.visibility = View.VISIBLE
+            binding.contentLayout.visibility = View.GONE
         }
     }
     
