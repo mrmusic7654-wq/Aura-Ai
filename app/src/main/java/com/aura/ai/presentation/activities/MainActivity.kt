@@ -10,9 +10,11 @@ import com.aura.ai.core.model.Qwen3Model
 import com.aura.ai.databinding.ActivityMainBinding
 import com.aura.ai.utils.Extensions.hide
 import com.aura.ai.utils.Extensions.show
+import com.aura.ai.utils.ModelLoader
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.delay
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -29,7 +31,7 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
         
         setupUI()
-        checkModelStatus()
+        checkModel()
     }
     
     private fun setupUI() {
@@ -37,29 +39,34 @@ class MainActivity : AppCompatActivity() {
             startActivity(Intent(this, SessionsActivity::class.java))
         }
         
-        binding.btnModelManager.setOnClickListener {
-            startActivity(Intent(this, ModelManagerActivity::class.java))
-        }
-        
         binding.btnSettings.setOnClickListener {
             startActivity(Intent(this, SettingsActivity::class.java))
         }
+        
+        binding.btnCheckModel.setOnClickListener {
+            checkModel()
+        }
     }
     
-    private fun checkModelStatus() {
+    private fun checkModel() {
         lifecycleScope.launch {
             binding.progressBar.show()
-            delay(500)
             
-            val currentModel = qwen3Model.getCurrentModel()
-            val status = if (qwen3Model.isLoaded()) {
-                "✓ Model loaded: $currentModel"
-            } else {
-                "⚠️ No model loaded. Go to Model Manager"
+            val result = withContext(Dispatchers.IO) {
+                try {
+                    ModelLoader.getModelFile(this@MainActivity, "qwen3-0.6b-int8.onnx")
+                    val loaded = qwen3Model.loadModel()
+                    qwen3Model.unloadModel()
+                    
+                    if (loaded) "✓ Qwen3 model ready (32K context!)" else "✗ Model failed to load"
+                } catch (e: Exception) {
+                    "✗ Error: ${e.message}"
+                }
             }
             
-            binding.tvModelStatus.text = status
             binding.progressBar.hide()
+            Toast.makeText(this@MainActivity, result, Toast.LENGTH_LONG).show()
+            binding.tvModelStatus.text = result
         }
     }
 }
