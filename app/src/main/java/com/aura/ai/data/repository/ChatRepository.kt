@@ -27,7 +27,8 @@ class ChatRepository @Inject constructor(
             createdAt = Date(),
             updatedAt = Date()
         )
-        return sessionDao.insert(session)
+        val id = sessionDao.insert(session)  // Returns Long
+        return session.id  // Return the UUID string, not the Long
     }
     
     suspend fun sendMessage(sessionId: String, content: String): ChatMessage {
