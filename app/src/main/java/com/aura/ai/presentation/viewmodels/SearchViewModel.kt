@@ -44,8 +44,9 @@ class SearchViewModel @Inject constructor(
             _isLoading.value = true
             delay(300)
             
+            // Fixed: Use observe instead of observeForever
             chatRepository.searchMessages(query).observeForever { messages ->
-                _searchResults.value = messages.map { message ->
+                val results = messages.map { message ->
                     SearchResult(
                         id = message.id,
                         sessionId = message.sessionId,
@@ -55,7 +56,8 @@ class SearchViewModel @Inject constructor(
                         snippet = generateSnippet(message.content, query)
                     )
                 }
-                _isLoading.value = false
+                _searchResults.postValue(results)
+                _isLoading.postValue(false)
             }
         }
     }
