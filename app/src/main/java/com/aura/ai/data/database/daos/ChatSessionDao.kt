@@ -8,7 +8,7 @@ import kotlinx.coroutines.flow.Flow
 interface ChatSessionDao {
     
     @Insert
-    suspend fun insert(session: ChatSession): String
+    suspend fun insert(session: ChatSession): Long  // Changed from String to Long
     
     @Update
     suspend fun update(session: ChatSession)
