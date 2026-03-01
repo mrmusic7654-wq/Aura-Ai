@@ -34,7 +34,6 @@ class SessionsViewModel @Inject constructor(
     fun loadSessions() {
         _isLoading.value = true
         
-        // Fixed: Use observe instead of observeForever
         chatRepository.getAllSessions().observeForever { sessions ->
             val items = sessions.map { session ->
                 SessionItem(
