@@ -5,6 +5,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.aura.ai.R
 import com.aura.ai.data.repository.ChatRepository
 import com.aura.ai.databinding.ItemChatMessageBinding
 import java.text.SimpleDateFormat
