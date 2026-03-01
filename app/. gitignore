@@ -1,5 +1,0 @@
-/build
-/src/debug
-/src/release
-*.iml
-output.json
