@@ -21,14 +21,14 @@
         <ScrollView
             android:layout_width="match_parent"
             android:layout_height="0dp"
+            android:padding="16dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintTop_toBottomOf="@id/toolbar">
             
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:padding="16dp">
+                android:orientation="vertical">
                 
                 <TextView
                     android:layout_width="match_parent"
@@ -43,7 +43,7 @@
                     android:id="@+id/btnModelManager"
                     android:layout_width="match_parent"
                     android:layout_height="56dp"
-                    android:text="📁 Model Manager"
+                    android:text="Model Manager"
                     android:textSize="16sp"
                     android:backgroundTint="@color/aura_surface"
                     app:cornerRadius="28dp"
@@ -68,7 +68,8 @@
                     android:textSize="14sp"
                     android:padding="16dp"
                     android:background="@color/aura_surface"
-                    android:layout_marginBottom="24dp" />
+                    android:layout_marginBottom="24dp"
+                    android:fontFamily="monospace" />
                 
                 <TextView
                     android:layout_width="match_parent"
@@ -83,7 +84,7 @@
                     android:id="@+id/btnAbout"
                     android:layout_width="match_parent"
                     android:layout_height="56dp"
-                    android:text="ℹ️ About Aura AI"
+                    android:text="About Aura AI"
                     android:textSize="16sp"
                     android:backgroundTint="@color/aura_surface"
                     app:cornerRadius="28dp"
