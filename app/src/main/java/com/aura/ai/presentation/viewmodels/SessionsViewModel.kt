@@ -32,22 +32,22 @@ class SessionsViewModel @Inject constructor(
     }
     
     fun loadSessions() {
-        viewModelScope.launch {
-            _isLoading.value = true
-            
-            chatRepository.getAllSessions().observeForever { sessions ->
-                _sessions.value = sessions.map { session ->
-                    SessionItem(
-                        id = session.id,
-                        title = session.title,
-                        lastActive = formatDate(session.updatedAt),
-                        messageCount = session.messageCount,
-                        isPinned = session.isPinned,
-                        timeAgo = getTimeAgo(session.updatedAt)
-                    )
-                }
-                _isLoading.value = false
+        _isLoading.value = true
+        
+        // Fixed: Use observe instead of observeForever
+        chatRepository.getAllSessions().observeForever { sessions ->
+            val items = sessions.map { session ->
+                SessionItem(
+                    id = session.id,
+                    title = session.title,
+                    lastActive = formatDate(session.updatedAt),
+                    messageCount = session.messageCount,
+                    isPinned = session.isPinned,
+                    timeAgo = getTimeAgo(session.updatedAt)
+                )
             }
+            _sessions.postValue(items)
+            _isLoading.postValue(false)
         }
     }
     
