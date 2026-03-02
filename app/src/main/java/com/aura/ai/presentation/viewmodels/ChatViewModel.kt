@@ -46,7 +46,7 @@ class ChatViewModel @Inject constructor(
     fun loadSession(sessionId: String) {
         currentSessionId = sessionId
         chatRepository.getMessagesForSession(sessionId).observeForever { messages ->
-            _messages.postValue(messages)
+            _messages.value = messages
         }
     }
     
