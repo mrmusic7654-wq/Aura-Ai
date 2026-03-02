@@ -16,62 +16,25 @@ class ChatAdapter : ListAdapter<ChatRepository.ChatMessage, ChatAdapter.ChatView
     private val dateFormat = SimpleDateFormat("h:mm a", Locale.getDefault())
     
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ChatViewHolder {
-        val binding = ItemChatMessageBinding.inflate(
-            LayoutInflater.from(parent.context),
-            parent,
-            false
-        )
-        return ChatViewHolder(binding)
+        return ChatViewHolder(ItemChatMessageBinding.inflate(LayoutInflater.from(parent.context), parent, false))
     }
     
     override fun onBindViewHolder(holder: ChatViewHolder, position: Int) {
         holder.bind(getItem(position))
     }
     
-    inner class ChatViewHolder(
-        private val binding: ItemChatMessageBinding
-    ) : RecyclerView.ViewHolder(binding.root) {
-        
+    inner class ChatViewHolder(private val binding: ItemChatMessageBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bind(message: ChatRepository.ChatMessage) {
-            binding.apply {
-                tvMessage.text = message.content
-                tvTime.text = dateFormat.format(message.timestamp)
-                
-                val backgroundRes = if (message.isFromUser) {
-                    R.drawable.bg_message_user
-                } else {
-                    R.drawable.bg_message_bot
-                }
-                messageContainer.setBackgroundResource(backgroundRes)
-                
-                val layoutParams = messageContainer.layoutParams as androidx.constraintlayout.widget.ConstraintLayout.LayoutParams
-                if (message.isFromUser) {
-                    layoutParams.startToStart = androidx.constraintlayout.widget.ConstraintLayout.LayoutParams.UNSET
-                    layoutParams.endToEnd = androidx.constraintlayout.widget.ConstraintLayout.LayoutParams.PARENT_ID
-                } else {
-                    layoutParams.startToStart = androidx.constraintlayout.widget.ConstraintLayout.LayoutParams.PARENT_ID
-                    layoutParams.endToEnd = androidx.constraintlayout.widget.ConstraintLayout.LayoutParams.UNSET
-                }
-                messageContainer.layoutParams = layoutParams
-                
-                executePendingBindings()
-            }
+            binding.tvMessage.text = message.content
+            binding.tvTime.text = dateFormat.format(message.timestamp)
+            binding.messageContainer.setBackgroundResource(
+                if (message.isFromUser) R.drawable.bg_message_user else R.drawable.bg_message_bot
+            )
         }
     }
     
     class ChatDiffCallback : DiffUtil.ItemCallback<ChatRepository.ChatMessage>() {
-        override fun areItemsTheSame(
-            oldItem: ChatRepository.ChatMessage,
-            newItem: ChatRepository.ChatMessage
-        ): Boolean {
-            return oldItem.id == newItem.id
-        }
-        
-        override fun areContentsTheSame(
-            oldItem: ChatRepository.ChatMessage,
-            newItem: ChatRepository.ChatMessage
-        ): Boolean {
-            return oldItem.content == newItem.content && oldItem.timestamp == newItem.timestamp
-        }
+        override fun areItemsTheSame(oldItem: ChatRepository.ChatMessage, newItem: ChatRepository.ChatMessage) = oldItem.id == newItem.id
+        override fun areContentsTheSame(oldItem: ChatRepository.ChatMessage, newItem: ChatRepository.ChatMessage) = oldItem == newItem
     }
 }
