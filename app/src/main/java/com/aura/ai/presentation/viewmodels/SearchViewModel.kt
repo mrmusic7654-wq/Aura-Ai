@@ -53,8 +53,8 @@ class SearchViewModel @Inject constructor(
                         snippet = generateSnippet(message.content, query)
                     )
                 }
-                _searchResults.postValue(results)
-                _isLoading.postValue(false)
+                _searchResults.value = results
+                _isLoading.value = false
             }
         }
     }
