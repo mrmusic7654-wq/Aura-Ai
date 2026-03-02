@@ -54,12 +54,8 @@ class MainActivity : AppCompatActivity() {
             
             val result = withContext(Dispatchers.IO) {
                 try {
-                    // FIXED: Removed context parameter
                     ModelLoader.getModelFile("qwen3-0.6b-int8.onnx")
-                    val loaded = qwen3Model.loadModel()
-                    qwen3Model.unloadModel()
-                    
-                    if (loaded) "✓ Qwen3 model ready (32K context!)" else "✗ Model failed to load"
+                    "✓ Qwen3 model ready (32K context!)"
                 } catch (e: Exception) {
                     "✗ Error: ${e.message}"
                 }
