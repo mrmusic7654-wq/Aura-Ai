@@ -5,6 +5,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.aura.ai.R
 import com.aura.ai.databinding.ItemSessionBinding
 import com.aura.ai.presentation.viewmodels.SessionsViewModel
 
@@ -15,78 +16,30 @@ class SessionsAdapter(
 ) : ListAdapter<SessionsViewModel.SessionItem, SessionsAdapter.SessionViewHolder>(SessionDiffCallback()) {
     
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SessionViewHolder {
-        val binding = ItemSessionBinding.inflate(
-            LayoutInflater.from(parent.context),
-            parent,
-            false
-        )
-        return SessionViewHolder(binding)
+        return SessionViewHolder(ItemSessionBinding.inflate(LayoutInflater.from(parent.context), parent, false))
     }
     
     override fun onBindViewHolder(holder: SessionViewHolder, position: Int) {
         holder.bind(getItem(position))
     }
     
-    inner class SessionViewHolder(
-        private val binding: ItemSessionBinding
-    ) : RecyclerView.ViewHolder(binding.root) {
-        
+    inner class SessionViewHolder(private val binding: ItemSessionBinding) : RecyclerView.ViewHolder(binding.root) {
         init {
-            binding.root.setOnClickListener {
-                val position = adapterPosition
-                if (position != RecyclerView.NO_POSITION) {
-                    onSessionClick(getItem(position).id)
-                }
-            }
-            
-            binding.root.setOnLongClickListener {
-                val position = adapterPosition
-                if (position != RecyclerView.NO_POSITION) {
-                    onSessionLongClick(getItem(position))
-                }
-                true
-            }
-            
-            binding.btnPin.setOnClickListener {
-                val position = adapterPosition
-                if (position != RecyclerView.NO_POSITION) {
-                    val session = getItem(position)
-                    onPinClick(session.id, !session.isPinned)
-                }
-            }
+            binding.root.setOnClickListener { onSessionClick(getItem(adapterPosition).id) }
+            binding.root.setOnLongClickListener { onSessionLongClick(getItem(adapterPosition)); true }
+            binding.btnPin.setOnClickListener { onPinClick(getItem(adapterPosition).id, !getItem(adapterPosition).isPinned) }
         }
         
         fun bind(session: SessionsViewModel.SessionItem) {
-            binding.apply {
-                tvTitle.text = session.title
-                tvTime.text = session.timeAgo
-                tvMessageCount.text = "${session.messageCount} messages"
-                
-                btnPin.setImageResource(
-                    if (session.isPinned) 
-                        android.R.drawable.star_on 
-                    else 
-                        android.R.drawable.star_off
-                )
-                
-                executePendingBindings()
-            }
+            binding.tvTitle.text = session.title
+            binding.tvTime.text = session.timeAgo
+            binding.tvMessageCount.text = "${session.messageCount} messages"
+            binding.btnPin.setImageResource(if (session.isPinned) android.R.drawable.star_on else android.R.drawable.star_off)
         }
     }
     
     class SessionDiffCallback : DiffUtil.ItemCallback<SessionsViewModel.SessionItem>() {
-        override fun areItemsTheSame(
-            oldItem: SessionsViewModel.SessionItem,
-            newItem: SessionsViewModel.SessionItem
-        ): Boolean {
-            return oldItem.id == newItem.id
-        }
-        
-        override fun areContentsTheSame(
-            oldItem: SessionsViewModel.SessionItem,
-            newItem: SessionsViewModel.SessionItem
-        ): Boolean {
-            return oldItem == newItem
-        }
+        override fun areItemsTheSame(oldItem: SessionsViewModel.SessionItem, newItem: SessionsViewModel.SessionItem) = oldItem.id == newItem.id
+        override fun areContentsTheSame(oldItem: SessionsViewModel.SessionItem, newItem: SessionsViewModel.SessionItem) = oldItem == newItem
     }
 }
