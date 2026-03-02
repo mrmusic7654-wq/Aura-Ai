@@ -32,7 +32,6 @@ class SearchViewModel @Inject constructor(
     
     fun search(query: String) {
         _currentQuery.value = query
-        
         searchJob?.cancel()
         
         if (query.length < 2) {
@@ -43,7 +42,6 @@ class SearchViewModel @Inject constructor(
         searchJob = viewModelScope.launch {
             _isLoading.value = true
             delay(300)
-            
             chatRepository.searchMessages(query).observeForever { messages ->
                 val results = messages.map { message ->
                     SearchResult(
@@ -65,7 +63,6 @@ class SearchViewModel @Inject constructor(
         val lowerContent = content.lowercase()
         val lowerQuery = query.lowercase()
         val index = lowerContent.indexOf(lowerQuery)
-        
         return if (index >= 0) {
             val start = maxOf(0, index - 30)
             val end = minOf(content.length, index + query.length + 30)
