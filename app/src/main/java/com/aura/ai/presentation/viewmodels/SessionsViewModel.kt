@@ -33,7 +33,6 @@ class SessionsViewModel @Inject constructor(
     
     fun loadSessions() {
         _isLoading.value = true
-        
         chatRepository.getAllSessions().observeForever { sessions ->
             val items = sessions.map { session ->
                 SessionItem(
@@ -54,7 +53,6 @@ class SessionsViewModel @Inject constructor(
         val now = Date()
         val diff = now.time - date.time
         val days = diff / (1000 * 60 * 60 * 24)
-        
         return when {
             days < 1 -> "Today"
             days == 1L -> "Yesterday"
@@ -69,7 +67,6 @@ class SessionsViewModel @Inject constructor(
         val minutes = diff / (1000 * 60)
         val hours = minutes / 60
         val days = hours / 24
-        
         return when {
             minutes < 1 -> "Just now"
             minutes < 60 -> "${minutes}m ago"
@@ -107,10 +104,6 @@ class SessionsViewModel @Inject constructor(
             chatRepository.deleteSession(sessionId)
             loadSessions()
         }
-    }
-    
-    fun onNavigationHandled() {
-        _navigateToChat.value = null
     }
     
     data class SessionItem(
