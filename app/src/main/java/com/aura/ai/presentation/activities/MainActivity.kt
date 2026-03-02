@@ -50,7 +50,7 @@ class MainActivity : AppCompatActivity() {
     
     private fun checkModel() {
         lifecycleScope.launch {
-            binding.progressBar.show()
+            binding.progressBar.visibility = View.VISIBLE
             
             val result = withContext(Dispatchers.IO) {
                 try {
@@ -61,7 +61,7 @@ class MainActivity : AppCompatActivity() {
                 }
             }
             
-            binding.progressBar.hide()
+            binding.progressBar.visibility = View.GONE
             Toast.makeText(this@MainActivity, result, Toast.LENGTH_LONG).show()
             binding.tvModelStatus.text = result
         }
