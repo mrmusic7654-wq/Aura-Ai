@@ -45,8 +45,6 @@ class ChatViewModel @Inject constructor(
     
     fun loadSession(sessionId: String) {
         currentSessionId = sessionId
-        
-        // FIXED: Using observe instead of observeForever
         chatRepository.getMessagesForSession(sessionId).observeForever { messages ->
             _messages.postValue(messages)
         }
@@ -54,14 +52,11 @@ class ChatViewModel @Inject constructor(
     
     fun sendMessage(content: String) {
         val sessionId = currentSessionId ?: return
-        
         viewModelScope.launch {
             _isLoading.value = true
             _error.value = null
-            
             try {
                 chatRepository.sendMessage(sessionId, content)
-                // Messages will auto-update via LiveData
             } catch (e: Exception) {
                 _error.value = "Failed to send: ${e.message}"
             } finally {
