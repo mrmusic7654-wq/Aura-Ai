@@ -35,7 +35,6 @@ class ModelManagerViewModel @Inject constructor(
     fun refreshModels() {
         viewModelScope.launch {
             _isLoading.value = true
-            
             val availableModels = ModelLoader.listAvailableModels()
             _models.value = availableModels.map { info ->
                 ModelItem(
@@ -46,7 +45,6 @@ class ModelManagerViewModel @Inject constructor(
                     isLoaded = info.name == qwen3Model.getCurrentModel()
                 )
             }
-            
             _statusMessage.value = "Found ${availableModels.size} model(s)"
             _isLoading.value = false
         }
@@ -77,14 +75,9 @@ class ModelManagerViewModel @Inject constructor(
             } else {
                 _statusMessage.value = "❌ Failed to load: ${qwen3Model.getModelError() ?: "Unknown error"}"
             }
-            
             refreshModels()
             _isLoading.value = false
         }
-    }
-    
-    fun onNavigationHandled() {
-        _navigateToChat.value = null
     }
     
     data class ModelItem(
