@@ -44,8 +44,8 @@ class SessionsViewModel @Inject constructor(
                     timeAgo = getTimeAgo(session.updatedAt)
                 )
             }
-            _sessions.postValue(items)
-            _isLoading.postValue(false)
+            _sessions.value = items
+            _isLoading.value = false
         }
     }
     
