@@ -1,9 +1,7 @@
-name: Build Aura AI APK
+name: ULTIMATE CLEAN BUILD
 
 on:
   push:
-    branches: [ "main", "master" ]
-  pull_request:
     branches: [ "main", "master" ]
   workflow_dispatch:
 
@@ -15,6 +13,8 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
 
       - name: Set up JDK 17
         uses: actions/setup-java@v4
@@ -25,39 +25,65 @@ jobs:
       - name: Setup Android SDK
         uses: android-actions/setup-android@v3
 
-      - name: Grant execute permission for gradlew
-        run: chmod +x gradlew
-
-      - name: 🔥 CLEAN EVERYTHING - Remove all caches
+      - name: 🔥 NUCLEAR CLEAN - Remove EVERYTHING
         run: |
-          echo "Cleaning Gradle caches..."
-          rm -rf ~/.gradle/caches/
-          rm -rf ~/.gradle/wrapper/
+          echo "=== Cleaning ALL caches ==="
+          rm -rf ~/.gradle
           rm -rf .gradle
           rm -rf app/build
-          echo "Clean completed!"
+          rm -rf ~/.android/cache
+          rm -rf ~/.m2
+          rm -rf ~/.cache
+          echo "✅ Clean complete"
 
-      - name: Build Debug APK (No Cache)
-        run: ./gradlew assembleDebug --stacktrace --no-build-cache --no-configuration-cache --refresh-dependencies
+      - name: Grant execute permission
+        run: chmod +x gradlew
 
-      - name: Upload Debug APK
+      - name: 📋 DEBUG - Show file contents
+        run: |
+          echo "=== Current Directory ==="
+          pwd
+          echo "=== Directory Structure ==="
+          find app/src/main/java/com/aura/ai -type f -name "*.kt" | sort
+          echo ""
+          echo "=== ChatActivity.kt Line 9 ==="
+          sed -n '9p' app/src/main/java/com/aura/ai/presentation/activities/ChatActivity.kt 2>/dev/null || echo "File not found"
+          echo ""
+          echo "=== Extensions.kt Content ==="
+          cat app/src/main/java/com/aura/ai/utils/Extensions.kt 2>/dev/null || echo "Extensions.kt not found"
+          echo ""
+          echo "=== Activity Imports Check ==="
+          grep -l "import androidx.activity.viewModels" app/src/main/java/com/aura/ai/presentation/activities/*.kt || echo "Missing viewModels import in some activities"
+
+      - name: 🏗️ BUILD APK - Fresh
+        run: |
+          echo "=== Running clean ==="
+          ./gradlew clean
+          echo "=== Building debug APK ==="
+          ./gradlew assembleDebug --stacktrace --no-build-cache --no-configuration-cache --refresh-dependencies
+        continue-on-error: false
+
+      - name: 📦 UPLOAD APK
         uses: actions/upload-artifact@v4
         with:
           name: AuraAI-Debug
           path: app/build/outputs/apk/debug/app-debug.apk
           if-no-files-found: error
+          retention-days: 90
 
-      - name: Create Build Summary
+      - name: ✅ Build Summary
         run: |
-          echo "## ✅ Aura AI Build Complete" >> $GITHUB_STEP_SUMMARY
+          echo "## 🚀 Aura AI Build Results" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
-          echo "### 📱 APK File:" >> $GITHUB_STEP_SUMMARY
           if [ -f app/build/outputs/apk/debug/app-debug.apk ]; then
-            DEBUG_SIZE=$(du -h app/build/outputs/apk/debug/app-debug.apk | cut -f1)
-            echo "- **Debug APK**: $DEBUG_SIZE" >> $GITHUB_STEP_SUMMARY
+            SIZE=$(du -h app/build/outputs/apk/debug/app-debug.apk | cut -f1)
+            echo "✅ **BUILD SUCCESSFUL!**" >> $GITHUB_STEP_SUMMARY
             echo "" >> $GITHUB_STEP_SUMMARY
-            echo "✅ **Build Successful!**" >> $GITHUB_STEP_SUMMARY
+            echo "📱 **APK Size:** $SIZE" >> $GITHUB_STEP_SUMMARY
+            echo "📍 **Location:** app/build/outputs/apk/debug/app-debug.apk" >> $GITHUB_STEP_SUMMARY
           else
-            echo "❌ **Build Failed** - APK not found" >> $GITHUB_STEP_SUMMARY
+            echo "❌ **BUILD FAILED**" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "Check the build logs above for errors." >> $GITHUB_STEP_SUMMARY
             exit 1
           fi
