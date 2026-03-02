@@ -61,14 +61,8 @@ class SessionsActivity : AppCompatActivity() {
     private fun setupObservers() {
         viewModel.sessions.observe(this, Observer { sessions ->
             sessionsAdapter.submitList(sessions)
-            
-            if (sessions.isEmpty()) {
-                binding.tvEmpty.visibility = View.VISIBLE
-                binding.recyclerView.visibility = View.GONE
-            } else {
-                binding.tvEmpty.visibility = View.GONE
-                binding.recyclerView.visibility = View.VISIBLE
-            }
+            binding.tvEmpty.visibility = if (sessions.isEmpty()) View.VISIBLE else View.GONE
+            binding.recyclerView.visibility = if (sessions.isEmpty()) View.GONE else View.VISIBLE
         })
         
         viewModel.isLoading.observe(this, Observer { isLoading ->
