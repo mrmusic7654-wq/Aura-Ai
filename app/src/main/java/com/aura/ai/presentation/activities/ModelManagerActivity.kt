@@ -1,6 +1,7 @@
 package com.aura.ai.presentation.activities
 
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.view.MenuItem
 import android.view.View
@@ -33,7 +34,6 @@ class ModelManagerActivity : AppCompatActivity() {
         setupRecyclerView()
         setupObservers()
         setupListeners()
-        
         checkPermission()
     }
     
@@ -92,21 +92,10 @@ class ModelManagerActivity : AppCompatActivity() {
     }
     
     private fun setupListeners() {
-        binding.btnRefresh.setOnClickListener {
-            refreshModels()
-        }
-        
-        binding.btnLoadModel.setOnClickListener {
-            viewModel.loadSelectedModel()
-        }
-        
-        binding.btnOpenFolder.setOnClickListener {
-            openModelsFolder()
-        }
-        
-        binding.btnRequestPermission.setOnClickListener {
-            StorageHelper.requestStoragePermission(this)
-        }
+        binding.btnRefresh.setOnClickListener { refreshModels() }
+        binding.btnLoadModel.setOnClickListener { viewModel.loadSelectedModel() }
+        binding.btnOpenFolder.setOnClickListener { openModelsFolder() }
+        binding.btnRequestPermission.setOnClickListener { StorageHelper.requestStoragePermission(this) }
     }
     
     private fun checkPermission() {
@@ -127,14 +116,8 @@ class ModelManagerActivity : AppCompatActivity() {
     }
     
     private fun openModelsFolder() {
-        val folder = android.net.Uri.parse(Constants.MODELS_FOLDER)
-        val intent = Intent(Intent.ACTION_VIEW).apply {
-            setDataAndType(folder, "resource/folder")
-            flags = Intent.FLAG_ACTIVITY_NEW_TASK
-        }
-        
         try {
-            startActivity(intent)
+            startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(Constants.MODELS_FOLDER)))
         } catch (e: Exception) {
             AlertDialog.Builder(this)
                 .setTitle("Cannot open folder")
@@ -144,11 +127,7 @@ class ModelManagerActivity : AppCompatActivity() {
         }
     }
     
-    override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<out String>,
-        grantResults: IntArray
-    ) {
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         if (requestCode == Constants.REQUEST_CODE_STORAGE_PERMISSION) {
             checkPermission()
@@ -157,10 +136,7 @@ class ModelManagerActivity : AppCompatActivity() {
     
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
-            android.R.id.home -> {
-                finish()
-                true
-            }
+            android.R.id.home -> { finish(); true }
             else -> super.onOptionsItemSelected(item)
         }
     }
