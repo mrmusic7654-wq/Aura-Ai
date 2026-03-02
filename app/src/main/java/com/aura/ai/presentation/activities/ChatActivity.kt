@@ -14,8 +14,6 @@ import com.aura.ai.R
 import com.aura.ai.databinding.ActivityChatBinding
 import com.aura.ai.presentation.adapters.ChatAdapter
 import com.aura.ai.presentation.viewmodels.ChatViewModel
-import com.aura.ai.utils.Extensions.hide
-import com.aura.ai.utils.Extensions.show
 import com.aura.ai.utils.Extensions.showSnackbar
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -75,13 +73,8 @@ class ChatActivity : AppCompatActivity() {
         })
         
         viewModel.isLoading.observe(this, Observer { isLoading ->
-            if (isLoading) {
-                binding.progressBar.visibility = View.VISIBLE
-                binding.btnSend.isEnabled = false
-            } else {
-                binding.progressBar.visibility = View.GONE
-                binding.btnSend.isEnabled = true
-            }
+            binding.progressBar.visibility = if (isLoading) View.VISIBLE else View.GONE
+            binding.btnSend.isEnabled = !isLoading
         })
         
         viewModel.error.observe(this, Observer { error ->
