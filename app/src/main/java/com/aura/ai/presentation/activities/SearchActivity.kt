@@ -56,11 +56,10 @@ class SearchActivity : AppCompatActivity() {
             searchAdapter.submitList(results)
             
             if (results.isEmpty()) {
-                if (viewModel.currentQuery.isNotEmpty()) {
-                    binding.tvEmpty.text = "No messages found for \"${viewModel.currentQuery}\""
-                } else {
-                    binding.tvEmpty.text = "Type to search your conversations"
-                }
+                binding.tvEmpty.text = if (viewModel.currentQuery.isNotEmpty()) 
+                    "No messages found for \"${viewModel.currentQuery}\"" 
+                else 
+                    "Type to search your conversations"
                 binding.tvEmpty.visibility = View.VISIBLE
                 binding.recyclerView.visibility = View.GONE
             } else {
@@ -77,11 +76,9 @@ class SearchActivity : AppCompatActivity() {
     private fun setupSearchListener() {
         binding.etSearch.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
-            
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 viewModel.search(s?.toString() ?: "")
             }
-            
             override fun afterTextChanged(s: Editable?) {}
         })
         
