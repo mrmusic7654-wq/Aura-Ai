@@ -3,10 +3,13 @@ name: Build Aura AI APK
 on:
   push:
     branches: [ "main", "master" ]
-  workflow_dispatch:  # Allows manual trigger
+  pull_request:
+    branches: [ "main", "master" ]
+  workflow_dispatch:  # Allow manual trigger
 
 jobs:
   build:
+    name: Build Aura AI
     runs-on: ubuntu-latest
     
     steps:
@@ -19,14 +22,54 @@ jobs:
           distribution: 'temurin'
           java-version: '17'
 
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v3
+
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
 
-      - name: Build Debug APK
-        run: ./gradlew assembleDebug
+      - name: Cache Gradle dependencies
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
 
-      - name: Upload APK
+      - name: Build Debug APK
+        run: ./gradlew assembleDebug --stacktrace
+        continue-on-error: false
+
+      - name: Upload Debug APK
         uses: actions/upload-artifact@v4
         with:
           name: AuraAI-Debug
           path: app/build/outputs/apk/debug/app-debug.apk
+          if-no-files-found: error
+
+      - name: Get APK size
+        id: apk_size
+        run: |
+          if [ -f app/build/outputs/apk/debug/app-debug.apk ]; then
+            DEBUG_SIZE=$(du -h app/build/outputs/apk/debug/app-debug.apk | cut -f1)
+            echo "debug_size=$DEBUG_SIZE" >> $GITHUB_OUTPUT
+            echo "✅ APK built successfully! Size: $DEBUG_SIZE"
+          else
+            echo "❌ APK not found!"
+            exit 1
+          fi
+
+      - name: Create Build Summary
+        run: |
+          echo "## ✅ Aura AI Build Successful" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### 📱 APK File:" >> $GITHUB_STEP_SUMMARY
+          echo "- **Debug APK**: ${{ steps.apk_size.outputs.debug_size }}" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### 📦 Model Instructions:" >> $GITHUB_STEP_SUMMARY
+          echo "1. Create folder on your phone:" >> $GITHUB_STEP_SUMMARY
+          echo "   \`/storage/emulated/0/AuraAI/models/\`" >> $GITHUB_STEP_SUMMARY
+          echo "2. Copy your \`.onnx\` model and \`tokenizer.json\` there" >> $GITHUB_STEP_SUMMARY
+          echo "3. Open app → Settings → Model Manager → Load model" >> $GITHUB_STEP_SUMMARY
