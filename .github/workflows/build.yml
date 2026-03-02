@@ -1,35 +1,47 @@
-name: Build APK
+name: Build Aura AI APK
 
 on:
   push:
-    branches: [ main ]
+    branches: [ "main", "master" ]
   workflow_dispatch:
 
 jobs:
   build:
     runs-on: ubuntu-latest
+    
     steps:
-      - uses: actions/checkout@v4
-      
+      - name: Checkout code
+        uses: actions/checkout@v4
+
       - name: Set up JDK 17
         uses: actions/setup-java@v4
         with:
           java-version: '17'
           distribution: 'temurin'
-      
+
       - name: Setup Android SDK
-        run: |
-          yes | sdkmanager --licenses
-          sdkmanager "platforms;android-34" "build-tools;34.0.0"
-      
-      - name: Grant execute permission
+        uses: android-actions/setup-android@v3
+
+      - name: Grant execute permission for gradlew
         run: chmod +x gradlew
-      
-      - name: Build APK
+
+      - name: Build Debug APK
         run: ./gradlew assembleDebug
-      
+
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: app-debug
+          name: AuraAI-App
           path: app/build/outputs/apk/debug/app-debug.apk
+
+      - name: Create Instructions
+        run: |
+          echo "✅ APK Built Successfully!" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "## 📱 How to Use Your App" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "1. **Download the APK** from Artifacts above" >> $GITHUB_STEP_SUMMARY
+          echo "2. **Install on your phone**" >> $GITHUB_STEP_SUMMARY
+          echo "3. **Create folder** at: \`/storage/emulated/0/AuraAI/models/\`" >> $GITHUB_STEP_SUMMARY
+          echo "4. **Copy your model files** (.onnx and tokenizer.json) to that folder" >> $GITHUB_STEP_SUMMARY
+          echo "5. **Open app → Settings → Model Manager → Load model**" >> $GITHUB_STEP_SUMMARY
